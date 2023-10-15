@@ -1,0 +1,49 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 25MB
+  application:
+    name: openblocks-management
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/management_db
+    username: management_techuser
+    password: password1
+    hikari:
+      schema: public
+  jpa:
+    properties:
+      hibernate:
+        query:
+          plan_cache_max_size: 256
+          plan_parameter_metadata_max_size: 128
+        criteria:
+          literal_handling_mode: BIND
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: db/changelog/db.changelog-master.xml
+    user: management_techuser
+    password: password1
+    default-schema: public
+
+app:
+  cookie:
+    domain: management.local
+
+  jwt:
+    private-key: MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDD1hgjfM60m6Wl3qDkbIv31mjeqCLLBnPmN0XROL7RFLfFkKUFhbc3FA+eMddiNxX6hZANiAARNXA9NYNBJhD7XYzY4VGcSH3Jf5HYDBqNTEXYd0epuj8iR/p3gQjQpmE/VRbCCqSEyxwXwqImPsyQnZSOeyUQ+ZhZA82ASSRMGoWyD9n4ylYDyZEyuR12LBEjHpMuDbIY=
+    public-key: MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAETVwPTWDQSYQ+12M2OFRnEh9yX+R2AwajUxF2HdHqbo/Ikf6d4EI0KZhP1UWwgqkhMscF8KiJj7MkJ2UjnslEPmYWQPNgEkkTBqFsg/Z+MpWA8mRMrkddiwRIx6TLg2yG

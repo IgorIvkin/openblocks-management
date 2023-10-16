@@ -89,6 +89,17 @@ public class TaskController {
         taskService.updateTaskEstimation(code, request);
     }
 
+    @PutMapping("/{code}/priority")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Обновляет приоритет у заданной задачи",
+            description = "Обновляет приоритет у задачи, заданной ее кодом"
+    )
+    public void updateTaskPriority(@RequestBody @Valid TaskUpdatePriorityRequest request,
+                                   @PathVariable @NotBlank @Size(max = 255) String code) {
+        taskService.updateTaskPriority(code, request);
+    }
+
     @PutMapping("/{code}/executor")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(

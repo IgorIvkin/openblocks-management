@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+import ru.openblocks.management.model.task.TaskPriority;
 import ru.openblocks.management.model.task.TaskType;
 
 import java.time.LocalDate;
@@ -23,6 +24,9 @@ public class TaskCreateRequest {
 
     @NotNull
     private TaskType taskType;
+
+    @NotNull
+    private TaskPriority priority;
 
     private Long ownerId;
 

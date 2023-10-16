@@ -3,8 +3,10 @@ package ru.openblocks.management.persistence.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import ru.openblocks.management.model.task.TaskPriority;
 import ru.openblocks.management.model.task.TaskStatus;
 import ru.openblocks.management.model.task.TaskType;
+import ru.openblocks.management.persistence.converter.TaskPriorityConverter;
 import ru.openblocks.management.persistence.converter.TaskStatusConverter;
 import ru.openblocks.management.persistence.converter.TaskTypeConverter;
 
@@ -33,6 +35,11 @@ public class TaskEntity {
     @Column(name = "task_type")
     @Convert(converter = TaskTypeConverter.class)
     private TaskType taskType;
+
+    @NotNull
+    @Column(name = "priority")
+    @Convert(converter = TaskPriorityConverter.class)
+    private TaskPriority priority;
 
     @Column(name = "code")
     private String code;

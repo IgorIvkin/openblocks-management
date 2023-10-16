@@ -25,6 +25,12 @@ public class UserController {
         return IdResponse.of(userId);
     }
 
+    @GetMapping("/current")
+    public UserResponse getCurrentUser() {
+        final Long currentUserId = userDataService.getCurrentUserId();
+        return userDataService.getById(currentUserId);
+    }
+
     @GetMapping("/{userId}")
     public UserResponse getById(@PathVariable Long userId) {
         return userDataService.getById(userId);

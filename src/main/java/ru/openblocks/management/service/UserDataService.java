@@ -225,7 +225,8 @@ public class UserDataService {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null) {
-            if (authentication instanceof AuthenticatedUser authenticatedUser) {
+            final Object principal = authentication.getPrincipal();
+            if (principal instanceof AuthenticatedUser authenticatedUser) {
                 return Optional.ofNullable(authenticatedUser.getUser())
                         .map(UserAuthenticationInfo::getId)
                         .orElse(null);

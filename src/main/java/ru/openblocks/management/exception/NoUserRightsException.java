@@ -18,6 +18,10 @@ public class NoUserRightsException extends RuntimeException {
         return new NoUserRightsException("You have not enough rights to manipulate with object");
     }
 
+    public static NoUserRightsException noAccessToProject(String code) {
+        return new NoUserRightsException("User has no rights to access project: " + code);
+    }
+
     public static NoUserRightsException ofEntityId(String type, Long entityId) {
         return new NoUserRightsException("You have not enough rights to manipulate with object " + type + " with ID "
                 + entityId);

@@ -1,5 +1,6 @@
 package ru.openblocks.management.api.dto.task.get;
 
+import ru.openblocks.management.model.task.TaskPriority;
 import ru.openblocks.management.model.task.TaskStatus;
 import ru.openblocks.management.model.task.TaskType;
 
@@ -14,6 +15,8 @@ public record TaskCardResponse(
         TaskStatus status,
 
         TaskType taskType,
+
+        TaskPriority priority,
 
         String subject,
 

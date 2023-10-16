@@ -11,6 +11,7 @@ import ru.openblocks.management.api.dto.task.get.TaskCardResponse;
 import ru.openblocks.management.api.dto.task.update.*;
 import ru.openblocks.management.exception.DatabaseEntityNotFoundException;
 import ru.openblocks.management.mapper.TaskMapper;
+import ru.openblocks.management.model.task.TaskPriority;
 import ru.openblocks.management.model.task.TaskStatus;
 import ru.openblocks.management.persistence.entity.ProjectEntity;
 import ru.openblocks.management.persistence.entity.TaskEntity;
@@ -217,6 +218,29 @@ public class TaskService {
         if (!Objects.equals(estimation, task.getEstimation())) {
             final Instant now = Instant.now(clock);
             task.setEstimation(estimation);
+            task.setUpdatedAt(now);
+            taskRepository.save(task);
+        }
+    }
+
+    /**
+     * Updates a priority of task by its given code.
+     *
+     * @param code    code of task
+     * @param request request to update priority of task
+     */
+    @Transactional
+    public void updateTaskPriority(String code, TaskUpdatePriorityRequest request) {
+
+        log.info("Change priority of task {} to {}", code, request);
+
+        final TaskPriority priority = request.priority();
+        TaskEntity task = taskRepository.findByCode(code)
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+
+        if (!Objects.equals(priority, task.getPriority())) {
+            final Instant now = Instant.now(clock);
+            task.setPriority(priority);
             task.setUpdatedAt(now);
             taskRepository.save(task);
         }

@@ -41,6 +41,11 @@ public class UserController {
         return userDataService.getByLogin(login);
     }
 
+    @GetMapping("/name")
+    public List<UserResponse> getByName(@RequestParam String name) {
+        return userDataService.getByName(name);
+    }
+
     @GetMapping("/{userId}/roles")
     public List<UserRoleResponse> getUserRolesById(@PathVariable Long userId) {
         return userDataService.getUserRoles(userId);

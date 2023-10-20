@@ -5,20 +5,29 @@ import java.util.stream.Stream;
 
 public enum TaskStatus {
 
-    CREATED(1L),
+    CREATED(1L, "Создано"),
 
-    IN_WORK(2L),
+    IN_WORK(2L, "В работе"),
 
-    CLOSED(3L);
+    CLOSED(3L, "Закрыто"),
+
+    REJECTED(4L, "Отклонено");
 
     private final Long status;
 
-    TaskStatus(Long status) {
+    private final String title;
+
+    TaskStatus(Long status, String title) {
         this.status = status;
+        this.title = title;
     }
 
     public Long asLong() {
         return status;
+    }
+
+    public String asText() {
+        return title;
     }
 
     public static TaskStatus of(Long status) {

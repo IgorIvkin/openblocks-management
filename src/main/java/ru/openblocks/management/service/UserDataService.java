@@ -125,6 +125,23 @@ public class UserDataService {
     }
 
     /**
+     * Returns users by part of name.
+     *
+     * @param name part of name
+     * @return list of user data
+     */
+    public List<UserResponse> getByName(String name) {
+
+        log.info("Get users by name {}", name);
+
+        List<UserDataEntity> users = userDataRepository.findAllByNameStartsWithIgnoreCase(name);
+
+        return users.stream()
+                .map(userDataMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Returns a list of position of user by its given ID.
      *
      * @param userId ID of user

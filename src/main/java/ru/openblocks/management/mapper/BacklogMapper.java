@@ -6,6 +6,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 import org.springframework.util.StringUtils;
 import ru.openblocks.management.api.dto.backlog.get.BacklogGetResponse;
+import ru.openblocks.management.mapper.util.UserUtils;
 import ru.openblocks.management.persistence.projection.BacklogProjection;
 
 import java.util.Arrays;
@@ -21,13 +22,6 @@ public interface BacklogMapper {
 
     @Named("mapShortName")
     default String mapShortName(String name) {
-        if (name != null) {
-            return Arrays.stream(name.split(" "))
-                    .filter(StringUtils::hasText)
-                    .limit(2)
-                    .map(item -> item.substring(0, 1).toUpperCase())
-                    .collect(Collectors.joining(""));
-        }
-        return null;
+        return UserUtils.mapShortName(name);
     }
 }

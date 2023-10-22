@@ -14,6 +14,8 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
 
     Optional<TaskEntity> findByCode(String code);
 
+    boolean existsByCode(String code);
+
     List<TaskEntity> findAllByProjectCode(String projectCode);
 
     List<TaskEntity> findAllByProjectCodeAndStatus(String projectCode, TaskStatus status);

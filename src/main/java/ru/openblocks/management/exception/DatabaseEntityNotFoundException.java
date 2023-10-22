@@ -33,4 +33,12 @@ public class DatabaseEntityNotFoundException extends RuntimeException {
     public static DatabaseEntityNotFoundException ofTaskCommentId(Long id) {
         return new DatabaseEntityNotFoundException("Task comment with id " + id + " was not found");
     }
+
+    public static DatabaseEntityNotFoundException ofTaskLinkId(Long id) {
+        return new DatabaseEntityNotFoundException("Task link with id " + id + " was not found");
+    }
+
+    public static DatabaseEntityNotFoundException ofTaskFileId(Long id) {
+        return new DatabaseEntityNotFoundException("Task file with id " + id + " was not found");
+    }
 }

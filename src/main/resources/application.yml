@@ -47,3 +47,15 @@ app:
   jwt:
     private-key: MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDD1hgjfM60m6Wl3qDkbIv31mjeqCLLBnPmN0XROL7RFLfFkKUFhbc3FA+eMddiNxX6hZANiAARNXA9NYNBJhD7XYzY4VGcSH3Jf5HYDBqNTEXYd0epuj8iR/p3gQjQpmE/VRbCCqSEyxwXwqImPsyQnZSOeyUQ+ZhZA82ASSRMGoWyD9n4ylYDyZEyuR12LBEjHpMuDbIY=
     public-key: MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAETVwPTWDQSYQ+12M2OFRnEh9yX+R2AwajUxF2HdHqbo/Ikf6d4EI0KZhP1UWwgqkhMscF8KiJj7MkJ2UjnslEPmYWQPNgEkkTBqFsg/Z+MpWA8mRMrkddiwRIx6TLg2yG
+
+  file-storage:
+    type: FILESYSTEM
+    path: "d:/dev/JavaProjects/openblocks/filestorage/"
+    allowed-mime-types:
+      - "application/pdf"
+      - "text/plain"
+      - "text/csv"
+      - "application/vnd.ms-excel"
+      - "image/jpeg"
+      - "image/gif"
+      - "image/png"

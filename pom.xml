@@ -21,6 +21,7 @@
 		<java-jwt.version>4.4.0</java-jwt.version>
 		<bouncycastle.version>1.70</bouncycastle.version>
 		<springdoc.version>1.7.0</springdoc.version>
+		<apache-tika.version>2.9.1</apache-tika.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -85,6 +86,11 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>${springdoc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>${apache-tika.version}</version>
 		</dependency>
 
 		<dependency>

@@ -73,4 +73,8 @@ public class TaskEntity {
 
     @Column(name = "estimation")
     private Integer estimation;
+
+    @ManyToOne
+    @JoinColumn(name = "sprint", referencedColumnName = "id")
+    private SprintEntity sprint;
 }

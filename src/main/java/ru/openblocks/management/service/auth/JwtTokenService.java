@@ -31,8 +31,8 @@ import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Сервис предназначен для верификации JWT-токенов, разбора их на запчасти, а также
- * для выпуска новых токенов для пользователей.
+ * Service used to verify JWT-tokens, parse them and to issue a new tokens
+ * for users of application.
  */
 @Slf4j
 @Service
@@ -81,10 +81,10 @@ public class JwtTokenService {
     }
 
     /**
-     * Генерирует токен для пользователя, сроком жизни + месяц от нынешней даты.
+     * Generates token for user with lifetime now + one month.
      *
-     * @param userName имя пользователя
-     * @return JWT-токен
+     * @param userName name of user
+     * @return JWT-token
      */
     public String issue(final String userName) {
         final LocalDateTime now = LocalDateTime.now();
@@ -97,11 +97,11 @@ public class JwtTokenService {
     }
 
     /**
-     * Освежает токен, возвращая новый токен, с увеличенным сроком жизни.
-     * Возвращает тот же самый токен в том случае, если он не нуждается в освежении.
+     * Refresh token returning a new token with increased lifetime.
+     * Returns the same token in case if it is not expired.
      *
-     * @param token JWT-токен, который нужно освежить
-     * @return новый JWT-токен
+     * @param token JWT-token to refresh
+     * @return new JWT-token
      */
     public String refresh(final String token) {
         final DecodedJWT decodedJwt = decode(token);
@@ -114,11 +114,11 @@ public class JwtTokenService {
     }
 
     /**
-     * Верифицирует токен. Возвращает false в случае, если токен неправильный, подписан не тем ключом, либо
-     * истёк срок жизни токена.
+     * Verifies token. Returns false in case if token is wrong, signed by wrong key
+     * or in case if it's expired.
      *
-     * @param token JWT-токен для анализа
-     * @return валиден ли токен
+     * @param token JWT-token to analyze
+     * @return true, if token is valid
      */
     public boolean verify(final String token) {
         if (token != null) {
@@ -137,11 +137,11 @@ public class JwtTokenService {
     }
 
     /**
-     * Декодирует токен, разбирая его на составляющие части. Этот метод нужен для того, чтобы получить
-     * содержимое токена без верификации. Может пригодиться, если токен истёк.
+     * Decodes token parsing it to claims. This method is used to parse token without verification.
+     * Useful when token is already expired.
      *
-     * @param token JWT-токен для разбора
-     * @return детализированная информация по токену
+     * @param token JWT-token to decode
+     * @return decoded token claims
      */
     public DecodedJWT decode(final String token) {
         if (token != null) {
@@ -151,10 +151,10 @@ public class JwtTokenService {
     }
 
     /**
-     * Устанавливает HTTP-Cookie со значением токена.
+     * Sets an HTTP-Cookie with token value.
      *
-     * @param token    JWT-токен
-     * @param response HTTP-ответ
+     * @param token    JWT-token
+     * @param response HTTP-response
      */
     public void setJwtTokenCookie(final String token, final HttpServletResponse response) {
         Cookie cookie = new Cookie(CookieConfig.JWT_TOKEN_COOKIE_NAME, token);
@@ -165,9 +165,9 @@ public class JwtTokenService {
     }
 
     /**
-     * "Забывает" HTTP-Cookie для токена.
+     * "Expires" HTTP-Cookie for token.
      *
-     * @param response HTTP-ответ
+     * @param response HTTP-response
      */
     public void expireJwtTokenCookie(final HttpServletResponse response) {
         Cookie cookie = new Cookie(CookieConfig.JWT_TOKEN_COOKIE_NAME, "");
@@ -178,10 +178,10 @@ public class JwtTokenService {
     }
 
     /**
-     * Извлекает JWT-токен из запроса.
+     * Extracts JWT-token from request.
      *
-     * @param request HTTP-запрос к сервлету
-     * @return JWT-токен
+     * @param request HTTP-request to servlet
+     * @return JWT-token
      */
     public String extractJwtToken(final HttpServletRequest request) {
         return jwtTokenResolver.resolve(request);

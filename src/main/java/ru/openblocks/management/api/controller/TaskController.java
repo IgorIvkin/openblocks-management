@@ -122,6 +122,17 @@ public class TaskController {
         taskService.updateTaskOwner(code, request);
     }
 
+    @PutMapping("/{code}/sprint")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Обновляет спринт у заданной задачи",
+            description = "Обновляет спринт у задачи, заданной ее кодом"
+    )
+    public void updateTaskSprint(@RequestBody @Valid TaskUpdateSprintRequest request,
+                                 @PathVariable @NotBlank @Size(max = 255) String code) {
+        taskService.updateTaskSprint(code, request);
+    }
+
     @GetMapping("/{code}")
     @Operation(
             summary = "Возвращает карточку задачи по её коду",

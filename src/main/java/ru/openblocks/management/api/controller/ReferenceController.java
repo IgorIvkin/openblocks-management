@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.openblocks.management.api.dto.reference.get.TaskLinkTypeReferenceResponse;
 import ru.openblocks.management.api.dto.reference.get.TaskPriorityReferenceResponse;
 import ru.openblocks.management.api.dto.reference.get.TaskStatusReferenceResponse;
 import ru.openblocks.management.api.dto.reference.get.TaskTypeReferenceResponse;
@@ -35,5 +36,10 @@ public class ReferenceController {
     @GetMapping("/types")
     public List<TaskTypeReferenceResponse> getTypes() {
         return referenceService.getTypes();
+    }
+
+    @GetMapping("/task-link-types")
+    public List<TaskLinkTypeReferenceResponse> getTaskLinkTypes() {
+        return referenceService.getTaskLinkTypes();
     }
 }

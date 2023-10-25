@@ -14,9 +14,11 @@ import ru.openblocks.management.mapper.TaskMapper;
 import ru.openblocks.management.model.task.TaskPriority;
 import ru.openblocks.management.model.task.TaskStatus;
 import ru.openblocks.management.persistence.entity.ProjectEntity;
+import ru.openblocks.management.persistence.entity.SprintEntity;
 import ru.openblocks.management.persistence.entity.TaskEntity;
 import ru.openblocks.management.persistence.entity.UserDataEntity;
 import ru.openblocks.management.persistence.repository.ProjectRepository;
+import ru.openblocks.management.persistence.repository.SprintRepository;
 import ru.openblocks.management.persistence.repository.TaskRepository;
 import ru.openblocks.management.persistence.repository.UserDataRepository;
 
@@ -36,6 +38,8 @@ public class TaskService {
 
     private final UserDataRepository userDataRepository;
 
+    private final SprintRepository sprintRepository;
+
     private final TaskMapper taskMapper;
 
     private final Clock clock = Clock.systemDefaultZone();
@@ -44,10 +48,12 @@ public class TaskService {
     public TaskService(ProjectRepository projectRepository,
                        TaskRepository taskRepository,
                        UserDataRepository userDataRepository,
+                       SprintRepository sprintRepository,
                        TaskMapper taskMapper) {
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
         this.userDataRepository = userDataRepository;
+        this.sprintRepository = sprintRepository;
         this.taskMapper = taskMapper;
     }
 
@@ -57,8 +63,8 @@ public class TaskService {
      * in format "PROJECT-nnn". For example having a project with code ABC and third task created in it
      * will result with code ABC-3.
      *
-     * @param projectCode    code of project
-     * @param request request to create a task
+     * @param projectCode code of project
+     * @param request     request to create a task
      * @return code of the task
      */
     @Transactional
@@ -70,6 +76,11 @@ public class TaskService {
         // Get current project for a task
         final ProjectEntity project = projectRepository.findByCode(projectCode)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofProjectCode(projectCode));
+
+        final SprintEntity sprint =
+                Optional.ofNullable(request.getSprintId())
+                        .flatMap(sprintRepository::findById)
+                        .orElse(null);
 
         // Get owner and executor
         final UserDataEntity executor = getUserById(request.getExecutorId());
@@ -86,6 +97,7 @@ public class TaskService {
         task.setUpdatedAt(now);
         task.setStatus(TaskStatus.CREATED);
         task.setCode(taskCode);
+        task.setSprint(sprint);
 
         taskRepository.save(task);
         return taskCode;
@@ -294,6 +306,32 @@ public class TaskService {
         }
     }
 
+    /**
+     * Updates sprint of task by its given code.
+     *
+     * @param code    code of task
+     * @param request request to update sprint
+     */
+    @Transactional
+    public void updateTaskSprint(String code, TaskUpdateSprintRequest request) {
+
+        log.info("Change spring of task {} to {}", code, request);
+
+        final Long sprintId = request.sprintId();
+        final SprintEntity sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofSprintId(sprintId));
+
+        TaskEntity task = taskRepository.findByCode(code)
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+
+        if (!Objects.equals(sprintId, getSprintIdFromTask(task))) {
+            final Instant now = Instant.now(clock);
+            task.setSprint(sprint);
+            task.setUpdatedAt(now);
+            taskRepository.save(task);
+        }
+    }
+
     private String createNewTaskCode(String projectCode) {
         final Long newTaskId = projectRepository.incrementAndGetByCode(projectCode);
         if (newTaskId == null) {
@@ -311,6 +349,12 @@ public class TaskService {
     private Long getOwnerIdFromTask(TaskEntity task) {
         return Optional.ofNullable(task.getOwner())
                 .map(UserDataEntity::getId)
+                .orElse(null);
+    }
+
+    private Long getSprintIdFromTask(TaskEntity task) {
+        return Optional.ofNullable(task.getSprint())
+                .map(SprintEntity::getId)
                 .orElse(null);
     }
 

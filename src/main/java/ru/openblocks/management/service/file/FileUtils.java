@@ -1,7 +1,6 @@
 package ru.openblocks.management.service.file;
 
 import lombok.experimental.UtilityClass;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.io.TikaInputStream;
@@ -14,6 +13,17 @@ import java.io.InputStream;
 @UtilityClass
 public class FileUtils {
 
+    private static final TikaConfig tika;
+
+    static {
+        try {
+            // Initializing of TikaConfig is quite expensive operation,
+            // so it is a reasonable idea to init it at once.
+            tika = new TikaConfig();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
     /**
      * Returns mime-type of file by its content. Content is represented by input stream.
@@ -26,7 +36,6 @@ public class FileUtils {
     public static String getMimeType(InputStream stream,
                                      String fileName) {
         try {
-            final TikaConfig tika = new TikaConfig();
             Metadata metadata = new Metadata();
 
             if (StringUtils.isNotBlank(fileName)) {
@@ -36,20 +45,6 @@ public class FileUtils {
             MediaType mediaType = tika.getDetector().detect(TikaInputStream.get(stream), metadata);
             return mediaType.toString();
 
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
-     * Returns a byte array representing content of stream.
-     *
-     * @param stream input stream
-     * @return byte content of stream
-     */
-    public static byte[] toByteArray(InputStream stream) {
-        try {
-            return IOUtils.toByteArray(stream);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

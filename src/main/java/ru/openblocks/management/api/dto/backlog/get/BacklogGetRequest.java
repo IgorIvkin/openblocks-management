@@ -11,10 +11,16 @@ public record BacklogGetRequest(
 
         @Size(max = 255) String projectCode,
 
+        @Size(max = 255) String taskCode,
+
         @Size(min = 2, max = 255) String subject,
 
         Set<TaskStatus> statuses,
 
-        Set<TaskPriority> priorities
+        Set<TaskPriority> priorities,
+
+        Set<Long> sprints,
+
+        BacklogGetOrderByRequest orderBy
 ) {
 }

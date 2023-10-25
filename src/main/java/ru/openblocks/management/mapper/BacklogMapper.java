@@ -18,6 +18,8 @@ public interface BacklogMapper {
     @Mapping(source = "executorId", target = "executor.id")
     @Mapping(source = "executorName", target = "executor.name")
     @Mapping(source = "executorName", target = "executor.shortName", qualifiedByName = "mapShortName")
+    @Mapping(source = "sprintId", target = "sprint.id")
+    @Mapping(source = "sprintTitle", target = "sprint.title")
     BacklogGetResponse toDto(BacklogProjection backlogProjection);
 
     @Named("mapShortName")

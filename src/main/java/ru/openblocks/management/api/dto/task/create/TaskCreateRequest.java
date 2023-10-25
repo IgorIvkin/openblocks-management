@@ -35,4 +35,6 @@ public class TaskCreateRequest {
     private Integer estimation;
 
     private LocalDate dueDate;
+
+    private Long sprintId;
 }

@@ -31,4 +31,6 @@ public class BacklogGetResponse {
     private Integer estimation;
 
     private BacklogUserGetResponse executor;
+
+    private BacklogSprintGetResponse sprint;
 }

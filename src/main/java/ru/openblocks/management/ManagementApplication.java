@@ -17,10 +17,10 @@ public class ManagementApplication {
 
 	private static void initializeApplication() {
 
-		// Устанавливаем временную зону по умолчанию (Московское время)
+		// Set default time zone (Europe/Moscow)
 		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
 
-		// Устанавливаем Security Provider по умолчанию - Bounty Castle
+		// Set default security provider - Bouncy Castle
 		Security.addProvider(new BouncyCastleProvider());
 	}
 

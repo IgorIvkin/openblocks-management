@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record TaskUpdateExplanationRequest(
-        @NotBlank @Size(max = 255) String explanation
+        @NotBlank @Size(max = 10000) String explanation
 ) {
 }

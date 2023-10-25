@@ -41,4 +41,8 @@ public class DatabaseEntityNotFoundException extends RuntimeException {
     public static DatabaseEntityNotFoundException ofTaskFileId(Long id) {
         return new DatabaseEntityNotFoundException("Task file with id " + id + " was not found");
     }
+
+    public static DatabaseEntityNotFoundException ofSprintId(Long id) {
+        return new DatabaseEntityNotFoundException("Sprint with id " + id + " was not found");
+    }
 }

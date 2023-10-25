@@ -59,6 +59,11 @@ public class TaskLinkService {
         final TaskLinkType linkType = request.linkType();
         final TaskLinkType connectedLinkType = getConnectedLinkType(linkType);
 
+        // Fails if both tasks are the same
+        if (Objects.equals(taskCode, connectedTaskCode)) {
+            throw DatabaseEntityAlreadyExistsException.ofTaskLink(taskCode);
+        }
+
         // Check that both tasks are exist
         TaskEntity task = taskRepository.findByCode(taskCode)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(taskCode));

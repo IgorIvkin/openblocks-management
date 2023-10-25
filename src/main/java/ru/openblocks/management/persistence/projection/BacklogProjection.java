@@ -33,4 +33,8 @@ public class BacklogProjection {
     private String executorName;
 
     private Integer estimation;
+
+    private Long sprintId;
+
+    private String sprintTitle;
 }

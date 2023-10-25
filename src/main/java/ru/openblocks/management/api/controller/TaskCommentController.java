@@ -36,6 +36,12 @@ public class TaskCommentController {
         taskCommentService.update(id, request);
     }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        taskCommentService.delete(id);
+    }
+
     @GetMapping("/comment/{id}")
     public TaskCommentResponse getById(@PathVariable Long id) {
         return taskCommentService.getById(id);

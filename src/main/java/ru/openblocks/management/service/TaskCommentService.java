@@ -89,6 +89,19 @@ public class TaskCommentService {
     }
 
     /**
+     * Deletes a comment by its ID.
+     *
+     * @param id id of comment
+     */
+    @Transactional
+    public void delete(Long id) {
+
+        log.info("Delete task comment by ID {}", id);
+
+        taskCommentRepository.deleteById(id);
+    }
+
+    /**
      * Returns a task comment by its given ID.
      *
      * @param id id of task comment

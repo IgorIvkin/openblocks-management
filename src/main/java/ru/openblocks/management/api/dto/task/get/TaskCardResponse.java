@@ -32,6 +32,8 @@ public record TaskCardResponse(
 
         LocalDate dueDate,
 
-        Integer estimation
+        Integer estimation,
+
+        TaskCardSprintResponse sprint
 ) {
 }

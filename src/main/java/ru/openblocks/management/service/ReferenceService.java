@@ -2,9 +2,11 @@ package ru.openblocks.management.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.openblocks.management.api.dto.reference.get.TaskLinkTypeReferenceResponse;
 import ru.openblocks.management.api.dto.reference.get.TaskPriorityReferenceResponse;
 import ru.openblocks.management.api.dto.reference.get.TaskStatusReferenceResponse;
 import ru.openblocks.management.api.dto.reference.get.TaskTypeReferenceResponse;
+import ru.openblocks.management.model.task.TaskLinkType;
 import ru.openblocks.management.model.task.TaskPriority;
 import ru.openblocks.management.model.task.TaskStatus;
 import ru.openblocks.management.model.task.TaskType;
@@ -50,6 +52,17 @@ public class ReferenceService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a list of task link types.
+     *
+     * @return task link types
+     */
+    public List<TaskLinkTypeReferenceResponse> getTaskLinkTypes() {
+        return Arrays.stream(TaskLinkType.values())
+                .map(this::mapTaskLinkType)
+                .collect(Collectors.toList());
+    }
+
     private TaskStatusReferenceResponse mapStatus(TaskStatus status) {
         return new TaskStatusReferenceResponse(status, status.asLong(), status.asText());
     }
@@ -59,6 +72,10 @@ public class ReferenceService {
     }
 
     private TaskTypeReferenceResponse mapType(TaskType type) {
-        return new TaskTypeReferenceResponse(type, type.asLong(), "");
+        return new TaskTypeReferenceResponse(type, type.asLong(), type.asText());
+    }
+
+    private TaskLinkTypeReferenceResponse mapTaskLinkType(TaskLinkType taskLinkType) {
+        return new TaskLinkTypeReferenceResponse(taskLinkType, taskLinkType.asLong(), taskLinkType.asText());
     }
 }

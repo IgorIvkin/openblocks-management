@@ -3,7 +3,9 @@ package ru.openblocks.management.api.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.openblocks.management.api.dto.common.IdResponse;
@@ -62,6 +64,15 @@ public class TaskFileController {
     @GetMapping("/{taskCode}")
     public List<TaskFileGetResponse> getByTaskCode(@PathVariable String taskCode) {
         return taskFileService.getFilesByTaskCode(taskCode);
+    }
+
+    @Operation(
+            summary = "Скачивает файл по его идентификатору",
+            description = "Скачивает файл по заданному идентификатору"
+    )
+    @GetMapping("/file/{id}")
+    public ResponseEntity<Resource> getFileById(@PathVariable Long id) {
+        return taskFileService.getFile(id);
     }
 
 }

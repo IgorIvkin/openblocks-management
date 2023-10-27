@@ -18,7 +18,14 @@ public interface SprintRepository extends JpaRepository<SprintEntity, Long> {
 
     @Query(nativeQuery = true,
             value = "select * from sprint s " +
-                    "where s.project_code = :projectCode and s.start_date >= :startDate")
+                    "where s.project_code = :projectCode and s.start_date >= :startDate " +
+                    "order by s.start_date asc")
     List<SprintEntity> findAllByProjectCodeAndStartDate(@Param("projectCode") String projectCode,
                                                         @Param("startDate") LocalDate startDate);
+
+    @Query(nativeQuery = true,
+            value = "select * from sprint s " +
+                    "where s.project_code = :projectCode and s.finished <> true " +
+                    "order by s.start_date asc")
+    List<SprintEntity> findAllUnfinishedByProjectCode(@Param("projectCode") String projectCode);
 }

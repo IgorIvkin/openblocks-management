@@ -33,8 +33,14 @@ public class DatabaseEntityAlreadyExistsException extends RuntimeException {
     public static DatabaseEntityAlreadyExistsException ofOverlappingSprints(String projectCode,
                                                                             LocalDate startDate,
                                                                             LocalDate endDate) {
-        return new DatabaseEntityAlreadyExistsException("Spring for project " + projectCode + " overlaps with dates "
+        return new DatabaseEntityAlreadyExistsException("Sprint for project " + projectCode + " overlaps with dates "
                 + startDate + " and " + endDate);
+    }
+
+    public static DatabaseEntityAlreadyExistsException ofSprintWithSameTitle(String projectCode,
+                                                                             String title) {
+        return new DatabaseEntityAlreadyExistsException("Project " + projectCode + " already has sprint with title " +
+                title);
     }
 
 }

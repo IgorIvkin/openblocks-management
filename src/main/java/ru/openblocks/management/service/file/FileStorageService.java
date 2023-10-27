@@ -16,5 +16,7 @@ public interface FileStorageService {
 
     String store(InputStream fileStream);
 
+    InputStream get(String fileName);
+
     void delete(String filePath);
 }

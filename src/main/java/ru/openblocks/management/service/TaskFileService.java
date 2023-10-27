@@ -2,6 +2,12 @@ package ru.openblocks.management.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.openblocks.management.api.dto.taskfile.create.TaskFileCreateRequest;
@@ -155,5 +161,41 @@ public class TaskFileService {
         return taskFiles.stream()
                 .map(taskFileMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns content of the file by its file id.
+     *
+     * @param fileId id of file
+     * @return content of file
+     */
+    @Transactional(readOnly = true)
+    public ResponseEntity<Resource> getFile(Long fileId) {
+
+        log.info("Get file by id {}", fileId);
+
+        final TaskFileEntity file = taskFileRepository.findById(fileId)
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskFileId(fileId));
+
+        final String fileName = getFileName(file);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                //.contentLength(file.length())
+                .contentType(MediaType.parseMediaType(file.getMimeType()))
+                .body(new InputStreamResource(fileStorageService.get(file.getFilePath())));
+    }
+
+    private String getFileName(TaskFileEntity file) {
+        if (file.getFileName() != null) {
+            return file.getFileName();
+        }
+        return "file";
     }
 }

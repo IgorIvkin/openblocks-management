@@ -1,6 +1,7 @@
 package ru.openblocks.management.model.task;
 
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 public enum TaskStatus {
@@ -35,5 +36,14 @@ public enum TaskStatus {
                 .filter(taskStatus -> taskStatus.asLong().equals(status))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    /**
+     * Returns a set of statuses that recognized to be closed task.
+     *
+     * @return set of closed statuses
+     */
+    public static Set<TaskStatus> closedStatuses() {
+        return Set.of(CLOSED, REJECTED);
     }
 }

@@ -113,6 +113,25 @@ public class FileSystemFileStorage implements FileStorageService {
         return newPictureFileName.replace(fileStorageConfig.getPath(), "");
     }
 
+    /**
+     * Returns the content of file from storage by id of file.
+     *
+     * @param fileName id of file
+     * @return input stream with content of file
+     */
+    @Override
+    public InputStream get(String fileName) {
+        if (!Files.exists(Paths.get(fileStorageConfig.getPath() + fileName))) {
+            throw new IllegalStateException("File " + fileName + " does not exist");
+        }
+        final File file = new File(fileStorageConfig.getPath() + fileName);
+        try {
+            return FileUtils.openInputStream(file);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
 
     /**
      * Checks that the file exists by its given path.

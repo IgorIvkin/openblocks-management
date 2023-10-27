@@ -31,6 +31,12 @@ public class NoneFileStorage implements FileStorageService {
     }
 
     @Override
+    public InputStream get(String id) {
+        log.warn("NONE file store will NOT actually return get file!");
+        return null;
+    }
+
+    @Override
     public void delete(String filePath) {
         log.warn("NONE file storage will NOT actually delete the file!");
     }

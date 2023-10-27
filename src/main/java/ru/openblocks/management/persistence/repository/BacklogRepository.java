@@ -4,16 +4,15 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.Tuple;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.math.raw.Nat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.openblocks.management.api.dto.backlog.get.BacklogGetRequest;
 import ru.openblocks.management.model.task.TaskPriority;
 import ru.openblocks.management.model.task.TaskStatus;
+import ru.openblocks.management.model.task.TaskType;
 import ru.openblocks.management.persistence.projection.BacklogProjection;
 import ru.openblocks.management.persistence.util.NativeQueryUtils;
 
-import java.lang.annotation.Native;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +37,7 @@ public class BacklogRepository {
         NativeQueryUtils.setParameterIfPresent(query, "executorId", request::executorId);
         NativeQueryUtils.setParameterIfPresent(query, "subject", () -> "%" + request.subject() + "%");
         NativeQueryUtils.setParameterIfPresent(query, "priorities", request::priorities);
+        NativeQueryUtils.setParameterIfPresent(query, "taskTypes", request::taskTypes);
         NativeQueryUtils.setParameterIfPresent(query, "sprints", request::sprints);
 
         final List<Tuple> resultList = query.getResultList();
@@ -71,6 +71,7 @@ public class BacklogRepository {
                 buildSprintsFilter(request) +
                 buildStatusesFilter(request) +
                 buildPrioritiesFilter(request) +
+                buildTaskTypesFilter(request) +
                 buildOrderBySection(request);
     }
 
@@ -122,6 +123,14 @@ public class BacklogRepository {
         final Set<TaskPriority> priorities = request.priorities();
         if (priorities != null && !priorities.isEmpty()) {
             return " and t.priority in (:priorities) ";
+        }
+        return "";
+    }
+
+    private String buildTaskTypesFilter(BacklogGetRequest request) {
+        final Set<TaskType> taskTypes = request.taskTypes();
+        if (taskTypes != null && !taskTypes.isEmpty()) {
+            return " and t.task_type in (:taskTypes) ";
         }
         return "";
     }

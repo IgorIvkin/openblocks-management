@@ -318,8 +318,10 @@ public class TaskService {
         log.info("Change spring of task {} to {}", code, request);
 
         final Long sprintId = request.sprintId();
-        final SprintEntity sprint = sprintRepository.findById(sprintId)
-                .orElseThrow(() -> DatabaseEntityNotFoundException.ofSprintId(sprintId));
+        final SprintEntity sprint =
+                Optional.ofNullable(sprintId)
+                .flatMap(sprintRepository::findById)
+                .orElse(null);
 
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));

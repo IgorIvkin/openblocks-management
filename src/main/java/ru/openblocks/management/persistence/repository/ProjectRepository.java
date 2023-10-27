@@ -12,6 +12,8 @@ import java.util.Optional;
 @Repository
 public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
 
+    boolean existsByCode(String code);
+
     Optional<ProjectEntity> findByCode(String code);
 
     @Query(nativeQuery = true,

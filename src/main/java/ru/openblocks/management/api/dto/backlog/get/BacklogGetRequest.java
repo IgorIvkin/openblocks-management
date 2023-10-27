@@ -3,6 +3,7 @@ package ru.openblocks.management.api.dto.backlog.get;
 import jakarta.validation.constraints.Size;
 import ru.openblocks.management.model.task.TaskPriority;
 import ru.openblocks.management.model.task.TaskStatus;
+import ru.openblocks.management.model.task.TaskType;
 
 import java.util.Set;
 
@@ -18,6 +19,8 @@ public record BacklogGetRequest(
         Set<TaskStatus> statuses,
 
         Set<TaskPriority> priorities,
+
+        Set<TaskType> taskTypes,
 
         Set<Long> sprints,
 

@@ -23,4 +23,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     List<TaskEntity> findAllByExecutorId(Long executorId);
 
     List<TaskEntity> findAllByExecutorIdAndProjectCode(Long executorId, String projectCode);
+
+    List<TaskEntity> findAllBySprintId(Long sprintId);
 }

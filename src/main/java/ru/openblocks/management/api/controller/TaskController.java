@@ -34,6 +34,16 @@ public class TaskController {
         return IdResponse.of(taskCode);
     }
 
+    @GetMapping("/{code}/clone")
+    @Operation(
+            summary = "Клонирует новую задачу по данным старой задачи",
+            description = "Клонирует новую задачу по данным старой задачи и возвращает ее код"
+    )
+    public IdResponse<String> cloneTask(@PathVariable String code) {
+        final String taskCode = taskService.cloneTask(code);
+        return IdResponse.of(taskCode);
+    }
+
     @PutMapping("/{code}/status")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(

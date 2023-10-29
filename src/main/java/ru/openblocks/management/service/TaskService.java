@@ -32,6 +32,8 @@ import java.util.Optional;
 @Service
 public class TaskService {
 
+    private final UserDataService userDataService;
+
     private final TaskRepository taskRepository;
 
     private final ProjectRepository projectRepository;
@@ -45,11 +47,13 @@ public class TaskService {
     private final Clock clock = Clock.systemDefaultZone();
 
     @Autowired
-    public TaskService(ProjectRepository projectRepository,
+    public TaskService(UserDataService userDataService,
+                       ProjectRepository projectRepository,
                        TaskRepository taskRepository,
                        UserDataRepository userDataRepository,
                        SprintRepository sprintRepository,
                        TaskMapper taskMapper) {
+        this.userDataService = userDataService;
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
         this.userDataRepository = userDataRepository;
@@ -82,9 +86,13 @@ public class TaskService {
                         .flatMap(sprintRepository::findById)
                         .orElse(null);
 
-        // Get owner and executor
+        // Get executor of the task
         final UserDataEntity executor = getUserById(request.getExecutorId());
-        final UserDataEntity owner = getUserById(request.getOwnerId());
+
+        // Get owner of the task. If it's not defined then current user is used.
+        final UserDataEntity owner =
+                Optional.ofNullable(getUserById(request.getOwnerId()))
+                .orElse(userDataService.getCurrentUser());
 
         // Create a new task
         final String taskCode = createNewTaskCode(projectCode);
@@ -100,7 +108,32 @@ public class TaskService {
         task.setSprint(sprint);
 
         taskRepository.save(task);
+        log.info("Created a task with code {}", taskCode);
         return taskCode;
+    }
+
+    /**
+     * Clones a given task copying a set of fields to a new task.
+     * New task is inside the same project and sprint by default.
+     *
+     * @param taskCode task code to copy
+     * @return task code of new task
+     */
+    @Transactional
+    public String cloneTask(String taskCode) {
+
+        log.info("Clone task {}", taskCode);
+
+        final TaskEntity original = taskRepository.findByCode(taskCode)
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(taskCode));
+
+        // Clones a task fields to a new task
+        TaskEntity newTask = cloneOriginalTask(original);
+
+        taskRepository.save(newTask);
+        final String newTaskCode = newTask.getCode();
+        log.info("Cloned a task with code {}", newTaskCode);
+        return newTaskCode;
     }
 
     /**
@@ -366,5 +399,29 @@ public class TaskService {
                     .orElseThrow(() -> DatabaseEntityNotFoundException.ofUserId(userId));
         }
         return null;
+    }
+
+    private TaskEntity cloneOriginalTask(TaskEntity original) {
+
+        final String projectCode = original.getProject().getCode();
+        final String newTaskCode = createNewTaskCode(projectCode);
+        final Instant now = Instant.now(clock);
+
+        TaskEntity newTask = new TaskEntity();
+        newTask.setCode(newTaskCode);
+        newTask.setCreatedAt(now);
+        newTask.setUpdatedAt(now);
+        newTask.setStatus(TaskStatus.CREATED);
+        newTask.setSubject(original.getSubject());
+        newTask.setExplanation(original.getExplanation());
+        newTask.setProject(original.getProject());
+        newTask.setExecutor(original.getExecutor());
+        newTask.setOwner(original.getOwner());
+        newTask.setSprint(original.getSprint());
+        newTask.setPriority(original.getPriority());
+        newTask.setTaskType(original.getTaskType());
+        newTask.setDueDate(original.getDueDate());
+        newTask.setEstimation(original.getEstimation());
+        return newTask;
     }
 }

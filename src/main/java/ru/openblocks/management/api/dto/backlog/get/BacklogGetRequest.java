@@ -5,10 +5,13 @@ import ru.openblocks.management.model.task.TaskPriority;
 import ru.openblocks.management.model.task.TaskStatus;
 import ru.openblocks.management.model.task.TaskType;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 public record BacklogGetRequest(
         Long executorId,
+
+        Long ownerId,
 
         @Size(max = 255) String projectCode,
 
@@ -23,6 +26,10 @@ public record BacklogGetRequest(
         Set<TaskType> taskTypes,
 
         Set<Long> sprints,
+
+        LocalDate dateFrom,
+
+        LocalDate dateTo,
 
         BacklogGetOrderByRequest orderBy
 ) {

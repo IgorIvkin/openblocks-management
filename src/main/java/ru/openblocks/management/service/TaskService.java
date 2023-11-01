@@ -412,7 +412,7 @@ public class TaskService {
         newTask.setCreatedAt(now);
         newTask.setUpdatedAt(now);
         newTask.setStatus(TaskStatus.CREATED);
-        newTask.setSubject(original.getSubject());
+        newTask.setSubject("[КОПИЯ] " + original.getSubject());
         newTask.setExplanation(original.getExplanation());
         newTask.setProject(original.getProject());
         newTask.setExecutor(original.getExecutor());

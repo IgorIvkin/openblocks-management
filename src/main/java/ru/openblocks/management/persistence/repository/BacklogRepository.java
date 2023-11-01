@@ -13,6 +13,7 @@ import ru.openblocks.management.model.task.TaskType;
 import ru.openblocks.management.persistence.projection.BacklogProjection;
 import ru.openblocks.management.persistence.util.NativeQueryUtils;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,10 +36,13 @@ public class BacklogRepository {
         NativeQueryUtils.setParameterIfPresent(query, "projectCode", request::projectCode);
         NativeQueryUtils.setParameterIfPresent(query, "taskCode", request::taskCode);
         NativeQueryUtils.setParameterIfPresent(query, "executorId", request::executorId);
+        NativeQueryUtils.setParameterIfPresent(query, "ownerId", request::ownerId);
         NativeQueryUtils.setParameterIfPresent(query, "subject", () -> "%" + request.subject() + "%");
         NativeQueryUtils.setParameterIfPresent(query, "priorities", request::priorities);
         NativeQueryUtils.setParameterIfPresent(query, "taskTypes", request::taskTypes);
         NativeQueryUtils.setParameterIfPresent(query, "sprints", request::sprints);
+        NativeQueryUtils.setParameterIfPresent(query, "dateFrom", request::dateFrom);
+        NativeQueryUtils.setParameterIfPresent(query, "dateTo", request::dateTo);
 
         final List<Tuple> resultList = query.getResultList();
 
@@ -67,11 +71,14 @@ public class BacklogRepository {
                 buildProjectCodeFilter(request) +
                 buildTaskCodeFilter(request) +
                 buildExecutorIdFilter(request) +
+                buildOwnerIdFilter(request) +
                 buildSubjectFilter(request) +
                 buildSprintsFilter(request) +
                 buildStatusesFilter(request) +
                 buildPrioritiesFilter(request) +
                 buildTaskTypesFilter(request) +
+                buildDateFromFilter(request) +
+                buildDateToFilter(request) +
                 buildOrderBySection(request);
     }
 
@@ -99,6 +106,14 @@ public class BacklogRepository {
         return "";
     }
 
+    private String buildOwnerIdFilter(BacklogGetRequest request) {
+        final Long ownerId = request.ownerId();
+        if (ownerId != null) {
+            return " and t.owner_id = :ownerId ";
+        }
+        return "";
+    }
+
     private String buildSubjectFilter(BacklogGetRequest request) {
         final String subject = request.subject();
         if (subject != null && subject.length() >= 2) {
@@ -122,7 +137,11 @@ public class BacklogRepository {
     private String buildPrioritiesFilter(BacklogGetRequest request) {
         final Set<TaskPriority> priorities = request.priorities();
         if (priorities != null && !priorities.isEmpty()) {
-            return " and t.priority in (:priorities) ";
+            return " and t.priority in (" +
+                    priorities.stream()
+                            .map(priority -> priority.asLong().toString())
+                            .collect(Collectors.joining(",")) +
+                    ") ";
         }
         return "";
     }
@@ -130,7 +149,11 @@ public class BacklogRepository {
     private String buildTaskTypesFilter(BacklogGetRequest request) {
         final Set<TaskType> taskTypes = request.taskTypes();
         if (taskTypes != null && !taskTypes.isEmpty()) {
-            return " and t.task_type in (:taskTypes) ";
+            return " and t.task_type in (" +
+                    taskTypes.stream()
+                            .map(taskType -> taskType.asLong().toString())
+                            .collect(Collectors.joining(",")) +
+                    ") ";
         }
         return "";
     }
@@ -139,6 +162,22 @@ public class BacklogRepository {
         final Set<Long> sprints = request.sprints();
         if (sprints != null && !sprints.isEmpty()) {
             return " and t.sprint in (:sprints) ";
+        }
+        return "";
+    }
+
+    private String buildDateFromFilter(BacklogGetRequest request) {
+        final LocalDate dateFrom = request.dateFrom();
+        if (dateFrom != null) {
+            return " and t.created_at >= :dateFrom ";
+        }
+        return "";
+    }
+
+    private String buildDateToFilter(BacklogGetRequest request) {
+        final LocalDate dateTo = request.dateTo();
+        if (dateTo != null) {
+            return " and t.created_at <= :dateTo ";
         }
         return "";
     }

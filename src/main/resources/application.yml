@@ -16,9 +16,9 @@ spring:
     name: openblocks-management
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/management_db
-    username: management_techuser
-    password: password1
+    url: "${DATASOURCE_URL}"
+    username: "${DATASOURCE_USERNAME}"
+    password: "${DATASOURCE_PASSWORD}"
     hikari:
       schema: public
   jpa:
@@ -36,13 +36,13 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: db/changelog/db.changelog-master.xml
-    user: management_techuser
-    password: password1
+    user: "${DATASOURCE_USERNAME}"
+    password: "${DATASOURCE_PASSWORD}"
     default-schema: public
 
 app:
   cookie:
-    domain: management.local
+    domain: ${APP_COOKIE_DOMAIN}
 
   jwt:
     private-key: MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDD1hgjfM60m6Wl3qDkbIv31mjeqCLLBnPmN0XROL7RFLfFkKUFhbc3FA+eMddiNxX6hZANiAARNXA9NYNBJhD7XYzY4VGcSH3Jf5HYDBqNTEXYd0epuj8iR/p3gQjQpmE/VRbCCqSEyxwXwqImPsyQnZSOeyUQ+ZhZA82ASSRMGoWyD9n4ylYDyZEyuR12LBEjHpMuDbIY=
@@ -50,7 +50,7 @@ app:
 
   file-storage:
     type: FILESYSTEM
-    path: "d:/dev/JavaProjects/openblocks/filestorage/"
+    path: "${FILE_STORAGE_PATH}"
     allowed-mime-types:
       - "application/pdf"
       - "text/plain"

@@ -10,6 +10,8 @@ public enum TaskStatus {
 
     IN_WORK(2L, "В работе"),
 
+    TESTING(5L, "Тестирование"),
+
     CLOSED(3L, "Закрыто"),
 
     REJECTED(4L, "Отклонено");

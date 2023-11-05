@@ -37,7 +37,7 @@ public class BacklogRepository {
         NativeQueryUtils.setParameterIfPresent(query, "taskCode", request::taskCode);
         NativeQueryUtils.setParameterIfPresent(query, "executorId", request::executorId);
         NativeQueryUtils.setParameterIfPresent(query, "ownerId", request::ownerId);
-        NativeQueryUtils.setParameterIfPresent(query, "subject", () -> "%" + request.subject() + "%");
+        NativeQueryUtils.setParameterIfPresent(query, "subject", () -> "%" + request.subject().toLowerCase() + "%");
         NativeQueryUtils.setParameterIfPresent(query, "priorities", request::priorities);
         NativeQueryUtils.setParameterIfPresent(query, "taskTypes", request::taskTypes);
         NativeQueryUtils.setParameterIfPresent(query, "sprints", request::sprints);
@@ -117,7 +117,7 @@ public class BacklogRepository {
     private String buildSubjectFilter(BacklogGetRequest request) {
         final String subject = request.subject();
         if (subject != null && subject.length() >= 2) {
-            return " and t.subject like :subject ";
+            return " and lower(t.subject) like :subject ";
         }
         return "";
     }

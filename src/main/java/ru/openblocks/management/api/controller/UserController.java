@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.openblocks.management.api.dto.common.IdResponse;
 import ru.openblocks.management.api.dto.user.create.UserCreateRequest;
 import ru.openblocks.management.api.dto.user.get.UserResponse;
+import ru.openblocks.management.api.dto.user.update.UserUpdateNameRequest;
+import ru.openblocks.management.api.dto.user.update.UserUpdatePasswordRequest;
 import ru.openblocks.management.api.dto.userrole.get.UserRoleResponse;
 import ru.openblocks.management.service.UserDataService;
 
@@ -23,6 +25,27 @@ public class UserController {
     public IdResponse<Long> create(@RequestBody @Valid UserCreateRequest request) {
         Long userId = userDataService.create(request);
         return IdResponse.of(userId);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{userId}/password")
+    public void updatePassword(@RequestBody @Valid UserUpdatePasswordRequest request,
+                               @PathVariable Long userId) {
+        userDataService.updatePassword(userId, request);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{userId}/name")
+    public void updateName(@RequestBody @Valid UserUpdateNameRequest request,
+                           @PathVariable Long userId) {
+        userDataService.updateName(userId, request);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{userId}/roles/{roleId}")
+    public void addRoleToUser(@PathVariable Long userId,
+                              @PathVariable Long roleId) {
+        userDataService.addRoleToUser(roleId, userId);
     }
 
     @GetMapping("/current")
@@ -51,10 +74,4 @@ public class UserController {
         return userDataService.getUserRoles(userId);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/{userId}/roles/{roleId}")
-    public void addRoleToUser(@PathVariable Long userId,
-                              @PathVariable Long roleId) {
-        userDataService.addRoleToUser(roleId, userId);
-    }
 }

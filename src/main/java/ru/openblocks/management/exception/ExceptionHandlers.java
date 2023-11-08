@@ -57,6 +57,13 @@ public class ExceptionHandlers {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse illegalArgumentException(IllegalArgumentException ex) {
+        log.warn("400 Bad Request - {}", getExceptionMessage(ex));
+        return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse wrongCredentialsException(WrongCredentialsException ex) {
         log.warn("401 Unauthorized - {}", getExceptionMessage(ex));

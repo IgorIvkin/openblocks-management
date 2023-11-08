@@ -12,6 +12,8 @@ import ru.openblocks.management.api.dto.auth.UserAuthenticationInfo;
 import ru.openblocks.management.api.dto.common.AuthenticatedUser;
 import ru.openblocks.management.api.dto.user.create.UserCreateRequest;
 import ru.openblocks.management.api.dto.user.get.UserResponse;
+import ru.openblocks.management.api.dto.user.update.UserUpdateNameRequest;
+import ru.openblocks.management.api.dto.user.update.UserUpdatePasswordRequest;
 import ru.openblocks.management.api.dto.userrole.get.UserRoleResponse;
 import ru.openblocks.management.exception.DatabaseEntityAlreadyExistsException;
 import ru.openblocks.management.exception.DatabaseEntityNotFoundException;
@@ -88,6 +90,54 @@ public class UserDataService {
 
         UserDataEntity savedUser = userDataRepository.save(user);
         return savedUser.getId();
+    }
+
+    /**
+     * Updates a password of given user.
+     *
+     * @param userId  ID of user
+     * @param request request to update password
+     */
+    @Transactional
+    public void updatePassword(Long userId, UserUpdatePasswordRequest request) {
+
+        log.info("Update password of user {}", userId);
+
+        if (!Objects.equals(request.password(), request.passwordRepeat())) {
+            throw new IllegalArgumentException("Passwords should match to update the password");
+        }
+
+        UserDataEntity user = userDataRepository.findById(userId)
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofUserId(userId));
+
+        final String newEncodedPassword = passwordEncoder.encode(request.password());
+
+        if (!passwordEncoder.matches(request.oldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect, cannot update password");
+        }
+
+        user.setPassword(newEncodedPassword);
+        userDataRepository.save(user);
+    }
+
+    /**
+     * Updates name of the user by its given ID.
+     *
+     * @param userId  ID of user
+     * @param request request to update name
+     */
+    @Transactional
+    public void updateName(Long userId, UserUpdateNameRequest request) {
+
+        log.info("Update user {} name by request {}", userId, request);
+
+        UserDataEntity user = userDataRepository.findById(userId)
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofUserId(userId));
+
+        if (!Objects.equals(request.name(), user.getName())) {
+            user.setName(request.name());
+            userDataRepository.save(user);
+        }
     }
 
     /**

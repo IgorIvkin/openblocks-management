@@ -22,6 +22,11 @@ public class UserRoleController {
         return userRoleService.getById(roleId);
     }
 
+    @GetMapping("/code/{code}")
+    public UserRoleResponse getByCode(@PathVariable String code) {
+        return userRoleService.getByCode(code);
+    }
+
     @PostMapping
     public IdResponse<Long> create(@RequestBody @Valid UserRoleCreateRequest request) {
         Long roleId = userRoleService.create(request);

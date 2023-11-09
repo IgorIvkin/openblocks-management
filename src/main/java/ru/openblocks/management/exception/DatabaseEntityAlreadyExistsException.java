@@ -15,6 +15,10 @@ public class DatabaseEntityAlreadyExistsException extends RuntimeException {
         super(message);
     }
 
+    public static DatabaseEntityAlreadyExistsException ofProjectCode(String code) {
+        return new DatabaseEntityAlreadyExistsException("Project with code " + code + " already exists");
+    }
+
     public static DatabaseEntityAlreadyExistsException ofUserLogin(String login) {
         return new DatabaseEntityAlreadyExistsException("User with login " + login + " already exists");
     }

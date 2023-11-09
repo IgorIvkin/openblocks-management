@@ -54,6 +54,12 @@ public class UserController {
         return userDataService.getById(currentUserId);
     }
 
+    @GetMapping("/current-roles")
+    public List<UserRoleResponse> getCurrentUserRoles() {
+        final Long currentUserId = userDataService.getCurrentUserId();
+        return userDataService.getUserRoles(currentUserId);
+    }
+
     @GetMapping("/{userId}")
     public UserResponse getById(@PathVariable Long userId) {
         return userDataService.getById(userId);

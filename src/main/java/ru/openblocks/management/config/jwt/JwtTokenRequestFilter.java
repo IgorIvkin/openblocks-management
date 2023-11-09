@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -20,12 +21,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import ru.openblocks.management.api.dto.auth.UserAuthenticationInfo;
 import ru.openblocks.management.api.dto.common.AuthenticatedUser;
 import ru.openblocks.management.api.dto.user.get.UserResponse;
+import ru.openblocks.management.api.dto.userrole.get.UserRoleResponse;
 import ru.openblocks.management.service.auth.JwtTokenService;
 import ru.openblocks.management.service.UserDataService;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -63,7 +66,6 @@ public class JwtTokenRequestFilter extends OncePerRequestFilter {
                 final DecodedJWT jwtClaims = jwtTokenService.decode(token);
                 final String userName = jwtClaims.getSubject();
                 final UserAuthenticationInfo user = mapToAuthenticationInfo(userService.getByLogin(userName));
-                final List<GrantedAuthority> authorities = new ArrayList<>();
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(
                                 AuthenticatedUser.builder()
@@ -72,7 +74,7 @@ public class JwtTokenRequestFilter extends OncePerRequestFilter {
                                         .token(token)
                                         .build(),
                                 null,
-                                setGrantedAuthorities(authorities, user)
+                                setGrantedAuthorities(user)
                         );
                 usernamePasswordAuthenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
@@ -116,9 +118,12 @@ public class JwtTokenRequestFilter extends OncePerRequestFilter {
                 .build();
     }
 
-    private List<GrantedAuthority> setGrantedAuthorities(List<GrantedAuthority> authorities,
-                                                         UserAuthenticationInfo user) {
-        return authorities;
+    private List<GrantedAuthority> setGrantedAuthorities(UserAuthenticationInfo user) {
+        final Long userId = user.getId();
+        final List<UserRoleResponse> userRoles = userService.getUserRoles(userId);
+        return userRoles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.code()))
+                .collect(Collectors.toList());
     }
 
 }

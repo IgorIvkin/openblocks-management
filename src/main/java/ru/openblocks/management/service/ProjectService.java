@@ -4,12 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.openblocks.management.api.dto.project.create.ProjectCreateRequest;
 import ru.openblocks.management.api.dto.project.get.ProjectResponse;
+import ru.openblocks.management.exception.DatabaseEntityAlreadyExistsException;
 import ru.openblocks.management.exception.DatabaseEntityNotFoundException;
 import ru.openblocks.management.mapper.ProjectMapper;
 import ru.openblocks.management.persistence.entity.ProjectEntity;
 import ru.openblocks.management.persistence.repository.ProjectRepository;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,11 +25,35 @@ public class ProjectService {
 
     private final ProjectMapper projectMapper;
 
+    private final Clock clock = Clock.systemDefaultZone();
+
     @Autowired
     public ProjectService(ProjectRepository projectRepository,
                           ProjectMapper projectMapper) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
+    }
+
+    /**
+     * Creates a new project.
+     *
+     * @param request request to create new project
+     */
+    @Transactional
+    public void create(ProjectCreateRequest request) {
+
+        log.info("Create new project by request {}", request);
+
+        final String projectCode = request.code();
+        if (projectRepository.existsByCode(projectCode)) {
+            throw DatabaseEntityAlreadyExistsException.ofProjectCode(projectCode);
+        }
+
+        ProjectEntity project = projectMapper.toEntity(request);
+        project.setCreatedAt(Instant.now(clock));
+        project.setTaskCounter(0L);
+
+        projectRepository.save(project);
     }
 
     /**

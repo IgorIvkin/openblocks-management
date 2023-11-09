@@ -197,6 +197,7 @@ public class UserDataService {
      * @param userId ID of user
      * @return list of positions of user
      */
+    @Transactional(readOnly = true)
     public List<UserRoleResponse> getUserRoles(Long userId) {
 
         log.info("Get user roles by user id {}", userId);

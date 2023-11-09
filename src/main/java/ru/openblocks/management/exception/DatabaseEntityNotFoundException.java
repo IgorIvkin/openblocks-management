@@ -22,6 +22,10 @@ public class DatabaseEntityNotFoundException extends RuntimeException {
         return new DatabaseEntityNotFoundException("User role with id " + id + " was not found");
     }
 
+    public static DatabaseEntityNotFoundException ofRoleCode(String code) {
+        return new DatabaseEntityNotFoundException("User role with code " + code + " was not found");
+    }
+
     public static DatabaseEntityNotFoundException ofProjectCode(String code) {
         return new DatabaseEntityNotFoundException("Project with code " + code + " was not found");
     }

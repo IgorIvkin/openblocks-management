@@ -19,4 +19,7 @@ public class UserRoleEntity {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "code")
+    private String code;
+
 }

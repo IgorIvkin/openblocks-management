@@ -78,4 +78,21 @@ public class UserRoleService {
         return userRoleMapper.toDto(userRole);
     }
 
+    /**
+     * Returns user role by its code.
+     *
+     * @param code code of user role
+     * @return user role defined by its code
+     */
+    @Transactional(readOnly = true)
+    public UserRoleResponse getByCode(String code) {
+
+        log.info("Get user role by code {}", code);
+
+        UserRoleEntity userRole = userRoleRepository.findByCode(code)
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofRoleCode(code));
+
+        return userRoleMapper.toDto(userRole);
+    }
+
 }

@@ -21,6 +21,7 @@ import ru.openblocks.management.persistence.repository.ProjectRepository;
 import ru.openblocks.management.persistence.repository.SprintRepository;
 import ru.openblocks.management.persistence.repository.TaskRepository;
 import ru.openblocks.management.persistence.repository.UserDataRepository;
+import ru.openblocks.management.service.history.TaskHistoryService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -33,6 +34,8 @@ import java.util.Optional;
 public class TaskService {
 
     private final UserDataService userDataService;
+
+    private final TaskHistoryService taskHistoryService;
 
     private final TaskRepository taskRepository;
 
@@ -48,12 +51,14 @@ public class TaskService {
 
     @Autowired
     public TaskService(UserDataService userDataService,
+                       TaskHistoryService taskHistoryService,
                        ProjectRepository projectRepository,
                        TaskRepository taskRepository,
                        UserDataRepository userDataRepository,
                        SprintRepository sprintRepository,
                        TaskMapper taskMapper) {
         this.userDataService = userDataService;
+        this.taskHistoryService = taskHistoryService;
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
         this.userDataRepository = userDataRepository;
@@ -109,6 +114,8 @@ public class TaskService {
 
         taskRepository.save(task);
         log.info("Created a task with code {}", taskCode);
+
+        taskHistoryService.trackCreateTask(taskCode);
         return taskCode;
     }
 
@@ -133,6 +140,8 @@ public class TaskService {
         taskRepository.save(newTask);
         final String newTaskCode = newTask.getCode();
         log.info("Cloned a task with code {}", newTaskCode);
+
+        taskHistoryService.trackCreateTask(taskCode);
         return newTaskCode;
     }
 
@@ -164,15 +173,17 @@ public class TaskService {
 
         log.info("Change status of task {} to {}", code, request);
 
-        final TaskStatus status = request.status();
+        final TaskStatus newStatus = request.status();
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+        final TaskStatus oldStatus = task.getStatus();
 
-        if (!Objects.equals(status, task.getStatus())) {
+        if (!Objects.equals(newStatus, oldStatus)) {
             final Instant now = Instant.now(clock);
-            task.setStatus(status);
+            task.setStatus(newStatus);
             task.setUpdatedAt(now);
             taskRepository.save(task);
+            taskHistoryService.trackChangeTaskStatus(code, oldStatus, newStatus);
         }
     }
 
@@ -187,15 +198,17 @@ public class TaskService {
 
         log.info("Change subject of task {} to {}", code, request);
 
-        final String subject = request.subject();
+        final String newSubject = request.subject();
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+        final String oldSubject = task.getSubject();
 
-        if (!Objects.equals(subject, task.getSubject())) {
+        if (!Objects.equals(newSubject, oldSubject)) {
             final Instant now = Instant.now(clock);
-            task.setSubject(subject);
+            task.setSubject(newSubject);
             task.setUpdatedAt(now);
             taskRepository.save(task);
+            taskHistoryService.trackChangeSubject(code, oldSubject, newSubject);
         }
     }
 
@@ -210,15 +223,17 @@ public class TaskService {
 
         log.info("Change explanation of task {} to {}", code, request);
 
-        final String explanation = request.explanation();
+        final String newExplanation = request.explanation();
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+        final String oldExplanation = task.getExplanation();
 
-        if (!Objects.equals(explanation, task.getExplanation())) {
+        if (!Objects.equals(newExplanation, oldExplanation)) {
             final Instant now = Instant.now(clock);
-            task.setExplanation(explanation);
+            task.setExplanation(newExplanation);
             task.setUpdatedAt(now);
             taskRepository.save(task);
+            taskHistoryService.trackChangeExplanation(code, oldExplanation, newExplanation);
         }
     }
 
@@ -233,15 +248,17 @@ public class TaskService {
 
         log.info("Change due date of task {} to {}", code, request);
 
-        final LocalDate dueDate = request.dueDate();
+        final LocalDate newDueDate = request.dueDate();
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+        final LocalDate oldDueDate = task.getDueDate();
 
-        if (!Objects.equals(dueDate, task.getDueDate())) {
+        if (!Objects.equals(newDueDate, oldDueDate)) {
             final Instant now = Instant.now(clock);
-            task.setDueDate(dueDate);
+            task.setDueDate(newDueDate);
             task.setUpdatedAt(now);
             taskRepository.save(task);
+            taskHistoryService.trackChangeTaskDueDate(code, oldDueDate, newDueDate);
         }
     }
 
@@ -256,15 +273,17 @@ public class TaskService {
 
         log.info("Change estimation of task {} to {}", code, request);
 
-        final Integer estimation = request.estimation();
+        final Integer newEstimation = request.estimation();
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+        final Integer oldEstimation = task.getEstimation();
 
-        if (!Objects.equals(estimation, task.getEstimation())) {
+        if (!Objects.equals(newEstimation, oldEstimation)) {
             final Instant now = Instant.now(clock);
-            task.setEstimation(estimation);
+            task.setEstimation(newEstimation);
             task.setUpdatedAt(now);
             taskRepository.save(task);
+            taskHistoryService.trackChangeEstimation(code, oldEstimation, newEstimation);
         }
     }
 
@@ -279,15 +298,17 @@ public class TaskService {
 
         log.info("Change priority of task {} to {}", code, request);
 
-        final TaskPriority priority = request.priority();
+        final TaskPriority newPriority = request.priority();
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+        final TaskPriority oldPriority = task.getPriority();
 
-        if (!Objects.equals(priority, task.getPriority())) {
+        if (!Objects.equals(newPriority, oldPriority)) {
             final Instant now = Instant.now(clock);
-            task.setPriority(priority);
+            task.setPriority(newPriority);
             task.setUpdatedAt(now);
             taskRepository.save(task);
+            taskHistoryService.trackChangeTaskPriority(code, oldPriority, newPriority);
         }
     }
 
@@ -303,15 +324,17 @@ public class TaskService {
         log.info("Change owner of task {} to {}", code, request);
 
         final Long ownerId = request.ownerId();
-        final UserDataEntity owner = getUserById(ownerId);
+        final UserDataEntity newOwner = getUserById(ownerId);
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+        final UserDataEntity oldOwner = task.getOwner();
 
         if (!Objects.equals(ownerId, getOwnerIdFromTask(task))) {
             final Instant now = Instant.now(clock);
-            task.setOwner(owner);
+            task.setOwner(newOwner);
             task.setUpdatedAt(now);
             taskRepository.save(task);
+            taskHistoryService.trackChangeOwner(code, oldOwner, newOwner);
         }
     }
 
@@ -327,15 +350,17 @@ public class TaskService {
         log.info("Change executor of task {} to {}", code, request);
 
         final Long executorId = request.executorId();
-        final UserDataEntity executor = getUserById(executorId);
+        final UserDataEntity newExecutor = getUserById(executorId);
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+        final UserDataEntity oldExecutor = task.getExecutor();
 
         if (!Objects.equals(executorId, getExecutorIdFromTask(task))) {
             final Instant now = Instant.now(clock);
-            task.setExecutor(executor);
+            task.setExecutor(newExecutor);
             task.setUpdatedAt(now);
             taskRepository.save(task);
+            taskHistoryService.trackChangeExecutor(code, oldExecutor, newExecutor);
         }
     }
 
@@ -351,19 +376,21 @@ public class TaskService {
         log.info("Change spring of task {} to {}", code, request);
 
         final Long sprintId = request.sprintId();
-        final SprintEntity sprint =
+        final SprintEntity newSprint =
                 Optional.ofNullable(sprintId)
                 .flatMap(sprintRepository::findById)
                 .orElse(null);
 
         TaskEntity task = taskRepository.findByCode(code)
                 .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
+        final SprintEntity oldSprint = task.getSprint();
 
         if (!Objects.equals(sprintId, getSprintIdFromTask(task))) {
             final Instant now = Instant.now(clock);
-            task.setSprint(sprint);
+            task.setSprint(newSprint);
             task.setUpdatedAt(now);
             taskRepository.save(task);
+            taskHistoryService.trackChangeSprint(code, oldSprint, newSprint);
         }
     }
 

@@ -21,6 +21,10 @@ import java.util.stream.Collectors;
 @Service
 public class ProjectService {
 
+    private final ProjectAccessService projectAccessService;
+
+    private final UserDataService userDataService;
+
     private final ProjectRepository projectRepository;
 
     private final ProjectMapper projectMapper;
@@ -28,14 +32,19 @@ public class ProjectService {
     private final Clock clock = Clock.systemDefaultZone();
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository,
+    public ProjectService(ProjectAccessService projectAccessService,
+                          UserDataService userDataService,
+                          ProjectRepository projectRepository,
                           ProjectMapper projectMapper) {
+        this.projectAccessService = projectAccessService;
+        this.userDataService = userDataService;
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
     }
 
     /**
      * Creates a new project.
+     * Gives also access to this project to current user.
      *
      * @param request request to create new project
      */
@@ -54,6 +63,10 @@ public class ProjectService {
         project.setTaskCounter(0L);
 
         projectRepository.save(project);
+
+        // Give access to current user to the newly created project
+        final Long userId = userDataService.getCurrentUserId();
+        projectAccessService.create(userId, projectCode);
     }
 
     /**

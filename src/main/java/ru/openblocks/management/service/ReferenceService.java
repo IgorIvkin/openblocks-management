@@ -2,14 +2,8 @@ package ru.openblocks.management.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.openblocks.management.api.dto.reference.get.TaskLinkTypeReferenceResponse;
-import ru.openblocks.management.api.dto.reference.get.TaskPriorityReferenceResponse;
-import ru.openblocks.management.api.dto.reference.get.TaskStatusReferenceResponse;
-import ru.openblocks.management.api.dto.reference.get.TaskTypeReferenceResponse;
-import ru.openblocks.management.model.task.TaskLinkType;
-import ru.openblocks.management.model.task.TaskPriority;
-import ru.openblocks.management.model.task.TaskStatus;
-import ru.openblocks.management.model.task.TaskType;
+import ru.openblocks.management.api.dto.reference.get.*;
+import ru.openblocks.management.model.task.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -63,6 +57,17 @@ public class ReferenceService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a list of history change objects.
+     *
+     * @return task history change objects
+     */
+    public List<TaskHistoryChangeObjectReferenceResponse> getTaskHistoryChangeObjects() {
+        return Arrays.stream(TaskHistoryChangeObject.values())
+                .map(this::mapTaskHistoryChangeObject)
+                .collect(Collectors.toList());
+    }
+
     private TaskStatusReferenceResponse mapStatus(TaskStatus status) {
         return new TaskStatusReferenceResponse(status, status.asLong(), status.asText());
     }
@@ -77,5 +82,13 @@ public class ReferenceService {
 
     private TaskLinkTypeReferenceResponse mapTaskLinkType(TaskLinkType taskLinkType) {
         return new TaskLinkTypeReferenceResponse(taskLinkType, taskLinkType.asLong(), taskLinkType.asText());
+    }
+
+    private TaskHistoryChangeObjectReferenceResponse mapTaskHistoryChangeObject(TaskHistoryChangeObject changeObject) {
+        return new TaskHistoryChangeObjectReferenceResponse(
+                changeObject,
+                changeObject.asLong(),
+                changeObject.asText()
+        );
     }
 }

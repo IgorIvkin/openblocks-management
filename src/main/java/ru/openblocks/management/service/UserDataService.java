@@ -3,6 +3,8 @@ package ru.openblocks.management.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ import ru.openblocks.management.persistence.repository.UserRoleRepository;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -301,6 +304,34 @@ public class UserDataService {
             }
         }
 
+        return null;
+    }
+
+    /**
+     * Checks whether current user is admin.
+     *
+     * @return true if current user is admin of system.
+     */
+    public boolean isCurrentUserAdmin() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null) {
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            if (authorities != null) {
+                return authorities.stream()
+                        .map(this::toSimpleGrantedAuthority)
+                        .filter(Objects::nonNull)
+                        .anyMatch(role -> Objects.equals(role, "ADMINISTRATOR"));
+            }
+        }
+
+        return false;
+    }
+
+    private String toSimpleGrantedAuthority(GrantedAuthority authority) {
+        if (authority instanceof SimpleGrantedAuthority simpleGrantedAuthority) {
+            return simpleGrantedAuthority.getAuthority();
+        }
         return null;
     }
 }

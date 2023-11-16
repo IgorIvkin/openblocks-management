@@ -4,6 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.openblocks.management.abac.Abac;
+import ru.openblocks.management.abac.task.TaskAccessRule;
+import ru.openblocks.management.abac.task.TaskLinkCreateAccessRule;
+import ru.openblocks.management.abac.task.TaskLinkDeleteAccessRule;
 import ru.openblocks.management.api.dto.tasklink.create.TaskLinkCreateRequest;
 import ru.openblocks.management.api.dto.tasklink.get.TaskLinkResponse;
 import ru.openblocks.management.exception.DatabaseEntityAlreadyExistsException;
@@ -50,6 +54,7 @@ public class TaskLinkService {
      * @return ID of created link
      */
     @Transactional
+    @Abac(type = TaskLinkCreateAccessRule.class, arguments = {"request"})
     public Long create(TaskLinkCreateRequest request) {
 
         log.info("Create task link by request {}", request);
@@ -104,6 +109,7 @@ public class TaskLinkService {
      * @return list of task links
      */
     @Transactional(readOnly = true)
+    @Abac(type = TaskAccessRule.class, arguments = {"taskCode"})
     public List<TaskLinkResponse> getByTaskCode(String taskCode) {
 
         log.info("Get task links by code {}", taskCode);
@@ -122,6 +128,7 @@ public class TaskLinkService {
      * @param id ID of link to delete
      */
     @Transactional
+    @Abac(type = TaskLinkDeleteAccessRule.class, arguments = {"id"})
     public void deleteById(Long id) {
 
         log.info("Delete task link by id {}", id);
@@ -159,6 +166,8 @@ public class TaskLinkService {
             case ASSOCIATED -> TaskLinkType.ASSOCIATED;
             case PARENT_OF -> TaskLinkType.CHILD_OF;
             case CHILD_OF -> TaskLinkType.PARENT_OF;
+            case REQUIRED_BY -> TaskLinkType.REQUIRED;
+            case REQUIRED -> TaskLinkType.REQUIRED_BY;
         };
     }
 }

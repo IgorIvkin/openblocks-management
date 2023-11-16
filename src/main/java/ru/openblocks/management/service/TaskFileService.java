@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.openblocks.management.abac.Abac;
+import ru.openblocks.management.abac.task.TaskAccessRule;
 import ru.openblocks.management.api.dto.taskfile.create.TaskFileCreateRequest;
 import ru.openblocks.management.api.dto.taskfile.get.TaskFileGetResponse;
 import ru.openblocks.management.exception.DatabaseEntityNotFoundException;
@@ -71,6 +73,7 @@ public class TaskFileService {
      * @return id of file
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"taskCode"})
     public Long store(String taskCode, InputStream fileInputStream, TaskFileCreateRequest request) {
 
         log.info("Store file to task {} by request {}", taskCode, request);
@@ -130,6 +133,7 @@ public class TaskFileService {
      * @param fileId   id of file
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"taskCode"})
     public void deleteFile(String taskCode, Long fileId) {
 
         log.info("Delete file {} from task {}", fileId, taskCode);
@@ -148,6 +152,7 @@ public class TaskFileService {
      * @return task files
      */
     @Transactional(readOnly = true)
+    @Abac(type = TaskAccessRule.class, arguments = {"taskCode"})
     public List<TaskFileGetResponse> getFilesByTaskCode(String taskCode) {
 
         log.info("Get task files by code {}", taskCode);

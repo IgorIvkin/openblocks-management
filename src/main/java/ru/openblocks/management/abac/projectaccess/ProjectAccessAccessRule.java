@@ -1,4 +1,4 @@
-package ru.openblocks.management.abac.task;
+package ru.openblocks.management.abac.projectaccess;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,14 +11,14 @@ import ru.openblocks.management.service.UserDataService;
 import java.util.Map;
 
 @Component
-public class ProjectAccessRule implements AccessRule {
+public class ProjectAccessAccessRule implements AccessRule {
 
     private final UserDataService userDataService;
 
     private final ProjectAccessService projectAccessService;
 
     @Autowired
-    public ProjectAccessRule(UserDataService userDataService,
+    public ProjectAccessAccessRule(UserDataService userDataService,
                              ProjectAccessService projectAccessService) {
         this.userDataService = userDataService;
         this.projectAccessService = projectAccessService;
@@ -37,13 +37,14 @@ public class ProjectAccessRule implements AccessRule {
         final Object param = arguments.get("projectCode");
         if (param != null) {
             if (param instanceof String projectCode) {
-                return projectAccessService.hasAccess(userId, projectCode);
+                return userDataService.isCurrentUserAdmin()
+                        || projectAccessService.isProjectAdmin(userId, projectCode);
             } else {
                 throw new IllegalStateException("Parameter 'projectCode' should have type String");
             }
         } else {
             throw new IllegalStateException("You have to specify parameter named 'projectCode' " +
-                    "to apply ProjectAccessRule");
+                    "to apply ProjectAccessAccessRule");
         }
     }
 }

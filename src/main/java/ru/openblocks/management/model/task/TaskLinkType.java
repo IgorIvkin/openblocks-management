@@ -8,7 +8,11 @@ public enum TaskLinkType {
 
     PARENT_OF(2L, "Родитель для"),
 
-    CHILD_OF(3L, "Потомок для");
+    CHILD_OF(3L, "Потомок для"),
+
+    REQUIRED_BY(4L, "Требуется в"),
+
+    REQUIRED(5L, "Требуется");
 
     private final Long linkType;
 

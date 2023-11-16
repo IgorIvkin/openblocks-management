@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.openblocks.management.abac.Abac;
-import ru.openblocks.management.abac.task.ProjectAccessRule;
+import ru.openblocks.management.abac.project.ProjectAccessRule;
+import ru.openblocks.management.abac.task.TaskAccessRule;
 import ru.openblocks.management.api.dto.task.create.TaskCreateRequest;
 import ru.openblocks.management.api.dto.task.get.TaskCardResponse;
 import ru.openblocks.management.api.dto.task.update.*;
@@ -127,6 +128,7 @@ public class TaskService {
      * @return task code of new task
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"taskCode"})
     public String cloneTask(String taskCode) {
 
         log.info("Clone task {}", taskCode);
@@ -152,6 +154,7 @@ public class TaskService {
      * @return card of task
      */
     @Transactional(readOnly = true)
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public TaskCardResponse getByCode(String code) {
 
         log.info("Get task by code {}", code);
@@ -169,6 +172,7 @@ public class TaskService {
      * @param request request to update status of task
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public void updateTaskStatus(String code, TaskUpdateStatusRequest request) {
 
         log.info("Change status of task {} to {}", code, request);
@@ -194,6 +198,7 @@ public class TaskService {
      * @param request request to update subject of task
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public void updateTaskSubject(String code, TaskUpdateSubjectRequest request) {
 
         log.info("Change subject of task {} to {}", code, request);
@@ -219,6 +224,7 @@ public class TaskService {
      * @param request request to update explanation of task
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public void updateTaskExplanation(String code, TaskUpdateExplanationRequest request) {
 
         log.info("Change explanation of task {} to {}", code, request);
@@ -244,6 +250,7 @@ public class TaskService {
      * @param request request to update due date of task
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public void updateTaskDueDate(String code, TaskUpdateDueDateRequest request) {
 
         log.info("Change due date of task {} to {}", code, request);
@@ -269,6 +276,7 @@ public class TaskService {
      * @param request request to update estimation of task
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public void updateTaskEstimation(String code, TaskUpdateEstimationRequest request) {
 
         log.info("Change estimation of task {} to {}", code, request);
@@ -294,6 +302,7 @@ public class TaskService {
      * @param request request to update priority of task
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public void updateTaskPriority(String code, TaskUpdatePriorityRequest request) {
 
         log.info("Change priority of task {} to {}", code, request);
@@ -319,6 +328,7 @@ public class TaskService {
      * @param request request to update owner
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public void updateTaskOwner(String code, TaskUpdateOwnerRequest request) {
 
         log.info("Change owner of task {} to {}", code, request);
@@ -345,6 +355,7 @@ public class TaskService {
      * @param request request to update executor
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public void updateTaskExecutor(String code, TaskUpdateExecutorRequest request) {
 
         log.info("Change executor of task {} to {}", code, request);
@@ -371,6 +382,7 @@ public class TaskService {
      * @param request request to update sprint
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public void updateTaskSprint(String code, TaskUpdateSprintRequest request) {
 
         log.info("Change spring of task {} to {}", code, request);

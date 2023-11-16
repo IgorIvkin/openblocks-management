@@ -26,4 +26,7 @@ public class ProjectAccessEntity {
 
     @Column(name = "created_at")
     private Instant createdAt;
+
+    @Column(name = "project_admin")
+    private Boolean projectAdmin;
 }

@@ -66,7 +66,7 @@ public class ProjectService {
 
         // Give access to current user to the newly created project
         final Long userId = userDataService.getCurrentUserId();
-        projectAccessService.create(userId, projectCode);
+        projectAccessService.update(userId, projectCode, true);
     }
 
     /**
@@ -101,6 +101,22 @@ public class ProjectService {
         return projects.stream()
                 .map(projectMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Checks that current user is admin of a given project.
+     *
+     * @param projectCode code of project
+     * @return true if current user is admin of given project
+     */
+    @Transactional(readOnly = true)
+    public boolean isCurrentUserProjectAdmin(String projectCode) {
+
+        final Long userId = userDataService.getCurrentUserId();;
+
+        log.info("Checks if current user {} is admin of project {}", userId, projectCode);
+
+        return projectAccessService.isProjectAdmin(userId, projectCode);
     }
 
     /**

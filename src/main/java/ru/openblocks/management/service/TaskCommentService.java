@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.openblocks.management.abac.Abac;
+import ru.openblocks.management.abac.task.TaskAccessRule;
 import ru.openblocks.management.api.dto.taskcomment.create.TaskCommentCreateRequest;
 import ru.openblocks.management.api.dto.taskcomment.get.TaskCommentResponse;
 import ru.openblocks.management.api.dto.taskcomment.update.TaskCommentUpdateRequest;
@@ -52,12 +54,13 @@ public class TaskCommentService {
      * @return ID of newly created comment
      */
     @Transactional
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public Long create(String code, TaskCommentCreateRequest request) {
 
         log.info("Add comment {} for task {}", request, code);
 
         taskRepository.findByCode(code)
-                .orElseThrow(() -> DatabaseEntityNotFoundException.ofProjectCode(code));
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
         final UserDataEntity author = userDataService.getCurrentUser();
         validateUser(author);
 
@@ -125,12 +128,13 @@ public class TaskCommentService {
      * @return task comments
      */
     @Transactional(readOnly = true)
+    @Abac(type = TaskAccessRule.class, arguments = {"code"})
     public List<TaskCommentResponse> getByTaskCode(String code) {
 
         log.info("Get comments by task {}", code);
 
         taskRepository.findByCode(code)
-                .orElseThrow(() -> DatabaseEntityNotFoundException.ofProjectCode(code));
+                .orElseThrow(() -> DatabaseEntityNotFoundException.ofTaskCode(code));
 
         List<TaskCommentEntity> taskComments = taskCommentRepository.findAllByTaskCode(code);
 

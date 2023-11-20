@@ -15,6 +15,7 @@ import ru.openblocks.management.persistence.repository.ProjectAccessRepository;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,11 +26,15 @@ public class ProjectAccessService {
 
     private final ProjectAccessMapper projectAccessMapper;
 
+    private final UserDataService userDataService;
+
     private final Clock clock = Clock.systemDefaultZone();
 
     @Autowired
-    public ProjectAccessService(ProjectAccessRepository projectAccessRepository,
+    public ProjectAccessService(UserDataService userDataService,
+                                ProjectAccessRepository projectAccessRepository,
                                 ProjectAccessMapper projectAccessMapper) {
+        this.userDataService = userDataService;
         this.projectAccessRepository = projectAccessRepository;
         this.projectAccessMapper = projectAccessMapper;
     }
@@ -88,6 +93,8 @@ public class ProjectAccessService {
 
         log.info("Update user {} access to project {}, admin status {}", userId, projectCode, projectAdmin);
 
+        forbidChangeProjectAccessByMyself(userId);
+
         ProjectAccessEntity projectAccess =
                 projectAccessRepository.findByUserIdAndProjectCode(userId, projectCode).orElse(null);
 
@@ -110,6 +117,8 @@ public class ProjectAccessService {
     public void delete(Long userId, String projectCode) {
 
         log.info("Remove access of user {} to project {}", userId, projectCode);
+
+        forbidChangeProjectAccessByMyself(userId);
 
         projectAccessRepository.deleteAllByUserIdAndProjectCode(userId, projectCode);
     }
@@ -179,6 +188,12 @@ public class ProjectAccessService {
         return projectAccesses.stream()
                 .map(projectAccessMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    private void forbidChangeProjectAccessByMyself(Long userId) {
+        if (Objects.equals(userDataService.getCurrentUserId(), userId)) {
+            throw new IllegalArgumentException("Cannot change project admin status by myself");
+        }
     }
 
 

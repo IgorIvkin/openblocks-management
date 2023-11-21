@@ -15,11 +15,11 @@ public class ObjectMapperConfig {
     public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
         ObjectMapper objectMapper = builder.build();
 
-        // Устанавливаем опции сериализации
+        // Sets serialization options
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-        // Добавляем нужные модули
+        // Adds required modules
         JavaTimeModule timeModule = new JavaTimeModule();
         objectMapper.registerModule(timeModule);
 

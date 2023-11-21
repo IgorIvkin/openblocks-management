@@ -37,4 +37,9 @@ public class AuthController {
     public AuthResponse refresh(@RequestBody ValidateRequest request) {
         return userAuthenticationService.refresh(request);
     }
+
+    @GetMapping("/logout")
+    public void logout(HttpServletResponse response) {
+        userAuthenticationService.logout(response);
+    }
 }

@@ -19,7 +19,7 @@
 		<org.projectlombok.version>1.18.30</org.projectlombok.version>
 		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 		<java-jwt.version>4.4.0</java-jwt.version>
-		<bouncycastle.version>1.70</bouncycastle.version>
+		<bouncycastle.version>1.77</bouncycastle.version>
 		<springdoc.version>1.7.0</springdoc.version>
 		<apache-tika.version>2.9.1</apache-tika.version>
 	</properties>
@@ -79,7 +79,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
+			<artifactId>bcprov-jdk18on</artifactId>
 			<version>${bouncycastle.version}</version>
 		</dependency>
 		<dependency>

@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.1</version>
+		<version>3.2.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ru.openblocks</groupId>
@@ -22,6 +22,7 @@
 		<bouncycastle.version>1.77</bouncycastle.version>
 		<springdoc.version>1.7.0</springdoc.version>
 		<apache-tika.version>2.9.1</apache-tika.version>
+		<hypersistence-utils-hibernate.version>3.7.0</hypersistence-utils-hibernate.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -61,6 +62,11 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.hypersistence</groupId>
+			<artifactId>hypersistence-utils-hibernate-63</artifactId>
+			<version>${hypersistence-utils-hibernate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

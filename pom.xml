@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.0</version>
+		<version>3.2.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ru.openblocks</groupId>
@@ -22,7 +22,7 @@
 		<bouncycastle.version>1.77</bouncycastle.version>
 		<springdoc.version>1.7.0</springdoc.version>
 		<apache-tika.version>2.9.1</apache-tika.version>
-		<hypersistence-utils-hibernate.version>3.7.0</hypersistence-utils-hibernate.version>
+		<hypersistence-utils-hibernate.version>3.7.1</hypersistence-utils-hibernate.version>
 	</properties>
 	<dependencies>
 		<dependency>

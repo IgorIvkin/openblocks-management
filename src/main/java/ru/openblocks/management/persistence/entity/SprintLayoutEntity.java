@@ -29,6 +29,6 @@ public class SprintLayoutEntity {
     private SprintEntity sprint;
 
     @Type(ListArrayType.class)
-    @Column(name = "sprint_layout", columnDefinition = "varchar[]")
+    @Column(name = "sprint_layout", columnDefinition = "_varchar")
     private List<String> sprintLayout;
 }
